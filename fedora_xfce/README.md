@@ -1,37 +1,42 @@
-XFCE in a Fedora Docker container
-=================================
+dockerfiles-fedora-firefox
+==========================
 
-What
-----
+Fedora dockerfile for Firefox over VNC
 
-Simple proof of concept to run Fedora 22 desktop in a container.
+Get the version of Docker
 
+```
+# docker version
+```
 
-Why
----
+To build:
 
-I want to run a graphical Linux app, such as `scap-workbench`,
-and access it from devices that cannot run an X Server,
-such as a stock Chromebook or Windows laptop.
+Copy the sources down -
 
-I may extend https://github.com/jumanjiman/wormhole to provide
-a full desktop along the lines of xrdp.
+```
+# docker build --rm -t <username>/firefox .
+```
 
+To run:
 
-Run
----
+```
+# docker run -d -p 5901:5901 <username>/firefox
+```
 
-On a Linux host with Docker:
+Check the that the image launched successfully
 
-    docker run -d -p 3389:3389 jumanjiman/xrdp
+```
+# docker ps
+CONTAINER ID        IMAGE                     COMMAND             CREATED             STATUS              PORTS                    NAMES
+b1296df1a4e8        scollier/firefox:latest   vncserver -fg       3 seconds ago       Up 1 seconds        0.0.0.0:5901->5901/tcp   angry_brown         
+```
 
-Connect to the container as user `foo` with password `bar`
-via an RDP client.
+To test -
 
+From the host that is running the container -
 
-Build
------
+```
+# vncviewer localhost:1
+```
 
-On a Linux host with Docker:
-
-    docker build --rm -t jumanjiman/xrdp .
+That's it.

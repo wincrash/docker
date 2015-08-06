@@ -1,28 +1,19 @@
 FROM fedora
+MAINTAINER ruslan pacevic
 
-RUN dnf -y groupinstall \
-    'Xfce Desktop' \
-    && dnf clean all
+# Install the appropriate software
+RUN dnf -y install firefox  tigervnc-server xterm  dejavu-sans-fonts dejavu-serif-fonts xdotool tar wget nano mc htop which git gcc-c++ make cmake openmpi-devel pwgen xauth qt-creator 
+RUN dnf -y groupinstall  'Xfce Desktop' 
 
-# http://sigkillit.com/2013/02/26/how-to-remotely-access-linux-from-windows/
-COPY Xclients /etc/skel/.Xclients
+# Add the xstartup file into the image and set the default password.
+RUN mkdir /root/.vnc
+ADD ./xstartup /root/.vnc/
+RUN chmod -v +x /root/.vnc/xstartup
+RUN echo vislt | vncpasswd -f > /root/.vnc/passwd
+RUN chmod -v 600 /root/.vnc/passwd
 
-RUN dnf -y install \
-    scap-security-guide \
-    scap-workbench \
-    supervisor \
-    xrdp \
-    && dnf clean all
 
-RUN useradd ruslan && echo ruslan:vislt | chpasswd && echo root:vislt | chpasswd
-
-# Configure supervisord to run session manager and xrdp.
-COPY xrdp.ini /etc/supervisord.d/
-
-# Allow all users to connect via RDP.
-RUN sed -i '/TerminalServerUsers/d' /etc/xrdp/sesman.ini && \
-    sed -i '/TerminalServerAdmins/d' /etc/xrdp/sesman.ini
-
+EXPOSE 5901
 EXPOSE 3389
 EXPOSE 22
 EXPOSE 21000
@@ -34,6 +25,5 @@ EXPOSE 8484
 VOLUME ["/work"]
 VOLUME ["/data"]
 
-CMD ["supervisord", "-n"]
-
-RUN dnf -y install tar wget nano mc htop which git gcc-c++ make cmake openmpi-devel pwgen xauth qt-creator 
+CMD    ["vncserver", "-fg" ]
+# ENTRYPOINT ["vncserver", "-fg" ]
