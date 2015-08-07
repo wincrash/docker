@@ -24,6 +24,6 @@ EXPOSE 8282
 EXPOSE 8484
 VOLUME ["/work"]
 VOLUME ["/data"]
-RUN dnf install qt5-*-devel tcp_wrappers-devel qt5-qttools-static libXt-devel libtiff-devel patch mesa-libGLU-devel libXi-devel
+RUN dnf -y install qt5-*-devel tcp_wrappers-devel qt5-qttools-static libXt-devel libtiff-devel patch mesa-libGLU-devel libXi-devel
 CMD    ["vncserver", "-fg" ]
 # ENTRYPOINT ["vncserver", "-fg" ]
